@@ -9,6 +9,8 @@ from dataclasses import dataclass
 from src.exception import CustomException
 from src.logger import logging
 
+from src.components.data_transformation import DataTransformation
+
 @dataclass
 class DataIngestionConfig:
     train_data_path=os.path.join('artifacts',"train_data.csv")
@@ -32,8 +34,8 @@ class DataIngestion:
             df.to_csv(self.ingestion_config.raw_data_path,header=False,index=False)
 
             train,test=train_test_split(df,random_state=10,shuffle=True,test_size=0.2)
-            train.to_csv(self.ingestion_config.train_data_path,header=False,index=False)
-            test.to_csv(self.ingestion_config.test_data_path,header=False,index=False)
+            train.to_csv(self.ingestion_config.train_data_path,header=True,index=False)
+            test.to_csv(self.ingestion_config.test_data_path,header=True,index=False)
         
             logging.info("ingestion of the data is completed")
 
@@ -48,4 +50,7 @@ class DataIngestion:
 
 if __name__=="__main__":
     obj=DataIngestion()
-    obj.initiate_data_ingestion()
+    train_path,test_path=obj.initiate_data_ingestion()
+
+    data_transformation=DataTransformation()
+    data_transformation.initiate_data_transformation(train_path,test_path)
